@@ -1,0 +1,153 @@
+---
+const testimonials = [
+  {
+    text: "Er ist ein sehr kompetenter Finanzmakler, der auch Unwissenden Licht ins Dunkle bringt. Gerade wenn man am Anfang steht und sich für das Leben gut beraten lassen will ist man bei ihm an der richtigen Stelle. Nur zu empfehlen!",
+    author: "SABINE BAYER"
+  },
+  {
+    text: "Mit Perfectio - Die Finanzmakler GmbH sind wir schon seit vielen Jahren überaus glücklich. Die Beratung sowie die Aufstellung unserer Finanzen und deren Wertentwicklung sind wie vorher gesagt zutreffend und immer lückenlos nachvollziehbar. Die offene, freundliche und humorvolle Art sowie der respektvolle Umgang mit dem Mandanten bringt ein Gefühl von Vertrauen und Zuversicht mit jedem Termin sowie Treffen einher. Ich und meine Frau sind weiterhin froh und auch stolz, dass wir mit dem Team der Pefectio zusammen arbeiten können. 5 Sterne",
+    author: "HARDY BARNICKEL"
+  },
+  {
+    text: "Dank Peter ist dieses komplexe Thema 'Finanzen und Absicherungen' für mich nicht nur erträglich, sondern sogar interessant geworden. Seine offene, freundliche Art und vor allem seine Kompetenz gibt mir bei jedem Gespräch das Gefühl, dass Peter der richtige Finanzmakler für mich ist. Er nimmt sich immer die Zeit die ich brauche, um alles zu verstehen und gibt mir nie das Gefühl, dumme Fragen zu stellen oder dass wir unter Zeitdruck stehen. Ich bin sehr zufrieden mit dem Service, freue mich auf viele weitere gemeinsame Jahre und kann Peter definitiv weiterempfehlen!",
+    author: "DM"
+  }
+];
+---
+
+<section class="bg-cream-200 py-16 text-center">
+  <h2 class="text-3xl font-bold italic mb-8">Das sagen unsere Kunden</h2>
+  <div class="max-w-3xl mx-auto px-4 relative">
+    <div class="testimonial-slider overflow-hidden">
+      <div class="testimonial-track flex transition-transform duration-500">
+        {testimonials.map((testimonial, index) => (
+          <div class="testimonial-slide w-full flex-shrink-0">
+            <blockquote class="text-xl text-gray-700 leading-relaxed">
+              „{testimonial.text}"
+              <footer class="mt-4 font-semibold">- {testimonial.author}</footer>
+            </blockquote>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+    <div class="flex justify-center gap-4 mt-8">
+      {testimonials.map((_, index) => (
+        <button
+          class="slider-dot w-8 h-8 p-2 rounded-full bg-gray-400 transition-colors duration-300"
+          data-index={index}
+          aria-label={`Testimonial ${index + 1} anzeigen`}
+        >
+          <span class="block w-4 h-4 rounded-full bg-current"></span>
+        </button>
+      ))}
+    </div>
+
+    <button
+      class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-white rounded-full p-4 shadow-md hover:bg-gray-100 min-w-[48px] min-h-[48px]"
+      id="prevButton"
+      aria-label="Vorheriges Testimonial"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button
+      class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-white rounded-full p-4 shadow-md hover:bg-gray-100 min-w-[48px] min-h-[48px]"
+      id="nextButton"
+      aria-label="Nächstes Testimonial"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .testimonial-slider {
+    width: 100%;
+    position: relative;
+  }
+
+  .testimonial-track {
+    width: 100%;
+  }
+
+  .testimonial-slide {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .slider-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slider-dot.active {
+    background-color: #4a0014;
+  }
+
+  .slider-dot:focus {
+    outline: 2px solid #4a0014;
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    .slider-dot:hover {
+      background-color: #666;
+    }
+  }
+</style>
+
+<script>
+  let currentSlide = 0;
+  const track = document.querySelector('.testimonial-track');
+  const slides = document.querySelectorAll('.testimonial-slide');
+  const dots = document.querySelectorAll('.slider-dot');
+  const prevButton = document.getElementById('prevButton');
+  const nextButton = document.getElementById('nextButton');
+
+  function updateSlider() {
+    const offset = currentSlide * -100;
+    track.style.transform = `translateX(${offset}%)`;
+    
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentSlide);
+      dot.setAttribute('aria-current', index === currentSlide ? 'true' : 'false');
+    });
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    updateSlider();
+  }
+
+  // Initialize dots
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => goToSlide(index));
+    dot.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+  });
+
+  // Previous button
+  prevButton.addEventListener('click', () => {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlider();
+  });
+
+  // Next button
+  nextButton.addEventListener('click', () => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+  });
+
+  // Auto-advance slides
+  setInterval(() => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+  }, 5000);
+
+  // Initialize slider
+  updateSlider();
+</script>

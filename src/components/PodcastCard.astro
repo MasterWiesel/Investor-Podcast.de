@@ -1,0 +1,38 @@
+---
+import AudioPlayer from './AudioPlayer.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  audioUrl?: string;
+  publishDate: string;
+  showLink?: boolean;
+}
+
+const { id, title, description, imageUrl, audioUrl, publishDate, showLink = false } = Astro.props;
+
+const formattedDate = new Date(publishDate).toLocaleDateString('de-DE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+<div class="bg-white rounded-xl p-5 shadow-lg">
+  <img src={imageUrl} alt={`Cover für ${title}`} class="w-full rounded-lg mb-4">
+  <p class="text-sm text-gray-600 mb-2">{formattedDate}</p>
+  <h3 class="text-xl font-bold mb-2">{title}</h3>
+  <p class="text-gray-600 mb-4">{description}</p>
+  {audioUrl && (
+    <AudioPlayer src={audioUrl} title={title} />
+  )}
+  {showLink && (
+    <a 
+      href={`/podcast-folgen/${id}`}
+      class="inline-block text-[#5f0019] hover:underline"
+    >
+      Shownotes lesen →
+    </a>
+  )}
+</div>

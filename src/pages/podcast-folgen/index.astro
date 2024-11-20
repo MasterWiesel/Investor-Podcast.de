@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PodcastCard from '../../components/PodcastCard.astro';
+import SearchBar from '../../components/SearchBar.astro';
+import { episodes } from '../../data/episodes';
+import { isPublished } from '../../utils/dateUtils';
+
+// Filter published episodes
+const publishedEpisodes = episodes.filter(episode => isPublished(episode.publishDate));
+
+console.log('All episodes:', episodes.length);
+console.log('Published episodes:', publishedEpisodes.map(ep => ep.title));
+
+// Group episodes by month and year
+const groupedEpisodes = publishedEpisodes.reduce((acc, episode) => {
+  const date = new Date(episode.publishDate);
+  const key = `${date.getFullYear()}-${date.getMonth()}`;
+  if (!acc[key]) {
+    acc[key] = {
+      title: new Date(episode.publishDate).toLocaleDateString('de-DE', {
+        year: 'numeric',
+        month: 'long'
+      }),
+      episodes: []
+    };
+  }
+  acc[key].episodes.push(episode);
+  return acc;
+}, {});
+
+// Sort groups by date (newest first)
+const sortedGroups = Object.entries(groupedEpisodes)
+  .sort(([keyA], [keyB]) => keyB.localeCompare(keyA))
+  .map(([_, group]) => ({
+    ...group,
+    episodes: group.episodes.sort((a, b) => 
+      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+    )
+  }));
+---
+
+<Layout title="Alle Podcast-Folgen - Investor Podcast">
+  <Header />
+  <main class="bg-cream-50 min-h-screen py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <h1 class="text-4xl font-bold mb-8">Alle Podcast-Folgen</h1>
+          
+          {sortedGroups.map(group => (
+            <div class="mb-12">
+              <h2 class="text-2xl font-semibold mb-6">{group.title}</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {group.episodes.map(episode => (
+                  <div 
+                    data-podcast-card 
+                    data-title={episode.title}
+                    data-description={episode.description}
+                  >
+                    <PodcastCard {...episode} showLink={true} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div class="no-results hidden text-center py-8 text-gray-600">
+            Keine Podcast-Folgen gefunden.
+          </div>
+
+          <div class="mt-12 mb-8">
+            <a href="/" class="text-[#5f0019] hover:underline">← Zurück zur Startseite</a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:sticky lg:top-8 space-y-8 self-start">
+          <SearchBar placeholder="Durchsuche alle Folgen..." />
+        </aside>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  aside {
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+</style>

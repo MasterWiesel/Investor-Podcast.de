@@ -1,0 +1,244 @@
+---
+interface Props {
+  src: string;
+  title: string;
+}
+
+const { src, title } = Astro.props;
+---
+
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+  <div class="custom-audio-player" data-audio-src={src} data-audio-title={title}>
+    <audio preload="metadata"></audio>
+    
+    <div class="flex items-center gap-4 mb-4">
+      <button 
+        class="play-button w-16 h-16 rounded-full bg-[#5f0019] text-white flex items-center justify-center hover:bg-[#4a0014] transition-colors"
+        aria-label={`${title} abspielen oder pausieren`}
+      >
+        <svg class="play-icon w-8 h-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg class="pause-icon hidden w-8 h-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </button>
+      
+      <div class="flex-1">
+        <div class="flex items-center gap-4 mb-2">
+          <span class="current-time text-sm">0:00</span>
+          <div 
+            class="progress-bar flex-1 h-2 bg-gray-200 rounded-full cursor-pointer"
+            role="slider"
+            aria-label="Audio-Fortschritt"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <div class="progress h-full w-0 bg-[#5f0019] rounded-full"></div>
+          </div>
+          <span class="duration text-sm">0:00</span>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button 
+              class="rewind-15 p-2 hover:bg-gray-100 rounded-full" 
+              aria-label="15 Sekunden zurückspulen"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+              </svg>
+            </button>
+            <button 
+              class="forward-30 p-2 hover:bg-gray-100 rounded-full" 
+              aria-label="30 Sekunden vorspulen"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.92 13c-.5-4.65-4.47-8-9.42-8-3.98 0-7.37 2.14-9 5.5l2.37.78C4 8.47 7.01 6.16 10.5 6.16c3.87 0 7.09 2.96 7.46 6.84H14.5l5 5 5-5h-5.58z"/>
+              </svg>
+            </button>
+            <div class="relative">
+              <button 
+                class="playback-speed p-2 hover:bg-gray-100 rounded-full font-medium"
+                aria-label="Wiedergabegeschwindigkeit ändern"
+              >
+                <span class="speed-text">1x</span>
+              </button>
+              <div class="speed-options hidden absolute bottom-full left-0 mb-2 bg-white shadow-lg rounded-lg py-2">
+                {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                  <button 
+                    class="block w-full px-4 py-1 text-left hover:bg-gray-100 text-sm" 
+                    data-speed={speed}
+                    aria-label={`Geschwindigkeit auf ${speed}x setzen`}
+                  >
+                    {speed}x
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <button 
+                class="volume-button p-2 hover:bg-gray-100 rounded-full" 
+                aria-label="Lautstärke anpassen"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+              </button>
+              <div class="volume-slider hidden absolute bottom-full left-0 mb-2 bg-white shadow-lg rounded-lg p-4">
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  value="100" 
+                  class="w-32 accent-[#5f0019]"
+                  aria-label="Lautstärkeregler"
+                >
+              </div>
+            </div>
+            
+            <a 
+              class="download p-2 hover:bg-gray-100 rounded-full" 
+              href={src} 
+              download 
+              aria-label={`${title} herunterladen`}
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class AudioPlayer {
+  constructor(container) {
+    this.container = container;
+    this.audio = container.querySelector('audio');
+    this.audio.src = container.dataset.audioSrc;
+    
+    this.initializeElements();
+    this.initializeEvents();
+    this.initializeState();
+  }
+
+  initializeElements() {
+    this.playButton = this.container.querySelector('.play-button');
+    this.playIcon = this.container.querySelector('.play-icon');
+    this.pauseIcon = this.container.querySelector('.pause-icon');
+    this.progressBar = this.container.querySelector('.progress-bar');
+    this.progress = this.container.querySelector('.progress');
+    this.currentTime = this.container.querySelector('.current-time');
+    this.duration = this.container.querySelector('.duration');
+    this.rewind15 = this.container.querySelector('.rewind-15');
+    this.forward30 = this.container.querySelector('.forward-30');
+    this.speedButton = this.container.querySelector('.playback-speed');
+    this.speedText = this.container.querySelector('.speed-text');
+    this.speedOptions = this.container.querySelector('.speed-options');
+    this.volumeButton = this.container.querySelector('.volume-button');
+    this.volumeSlider = this.container.querySelector('.volume-slider');
+  }
+
+  initializeEvents() {
+    this.playButton.addEventListener('click', () => this.togglePlay());
+    this.audio.addEventListener('timeupdate', () => this.updateProgress());
+    this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
+    this.progressBar.addEventListener('click', (e) => this.seek(e));
+    this.rewind15.addEventListener('click', () => this.skip(-15));
+    this.forward30.addEventListener('click', () => this.skip(30));
+    
+    // Playback Speed
+    this.speedButton.addEventListener('click', () => {
+      this.speedOptions.classList.toggle('hidden');
+    });
+    
+    this.speedOptions.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', () => {
+        const speed = parseFloat(button.dataset.speed);
+        this.audio.playbackRate = speed;
+        this.speedText.textContent = `${speed}x`;
+        this.speedOptions.classList.add('hidden');
+      });
+    });
+
+    // Volume Control
+    this.volumeButton.addEventListener('click', () => {
+      this.volumeSlider.classList.toggle('hidden');
+    });
+    
+    this.volumeSlider.querySelector('input').addEventListener('input', (e) => {
+      this.audio.volume = e.target.value / 100;
+    });
+
+    // Hide menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!this.speedButton.contains(e.target)) {
+        this.speedOptions.classList.add('hidden');
+      }
+      if (!this.volumeButton.contains(e.target)) {
+        this.volumeSlider.classList.add('hidden');
+      }
+    });
+  }
+
+  initializeState() {
+    this.audio.volume = 1;
+    this.audio.playbackRate = 1;
+    this.speedText.textContent = '1x';
+  }
+
+  togglePlay() {
+    if (this.audio.paused) {
+      this.audio.play();
+      this.playIcon.classList.add('hidden');
+      this.pauseIcon.classList.remove('hidden');
+    } else {
+      this.audio.pause();
+      this.playIcon.classList.remove('hidden');
+      this.pauseIcon.classList.add('hidden');
+    }
+  }
+
+  formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  updateProgress() {
+    const percent = (this.audio.currentTime / this.audio.duration) * 100;
+    this.progress.style.width = `${percent}%`;
+    this.currentTime.textContent = this.formatTime(this.audio.currentTime);
+    this.progressBar.setAttribute('aria-valuenow', Math.round(percent));
+  }
+
+  updateDuration() {
+    this.duration.textContent = this.formatTime(this.audio.duration);
+  }
+
+  seek(e) {
+    const rect = this.progressBar.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    this.audio.currentTime = percent * this.audio.duration;
+  }
+
+  skip(seconds) {
+    this.audio.currentTime = Math.max(0, Math.min(this.audio.currentTime + seconds, this.audio.duration));
+  }
+}
+
+// Initialize all audio players on the page
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.custom-audio-player').forEach(container => {
+    new AudioPlayer(container);
+  });
+});
+</script>

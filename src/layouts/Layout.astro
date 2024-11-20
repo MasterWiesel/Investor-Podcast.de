@@ -1,0 +1,175 @@
+---
+import WhatsAppWidget from '../components/WhatsAppWidget.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Investor Podcast - Ihr Podcast für Finanzen, Börse und Wirtschaft" />
+    <link rel="icon" type="image/png" href="https://perfectio-die-finanzmakler.de/public/images/favicon.png" />
+    <link rel="apple-touch-icon" href="https://perfectio-die-finanzmakler.de/public/images/apple-touch-icon.png" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <!-- Klaro Cookie Consent -->
+    <style is:inline>
+      /* Klaro styles for better accessibility */
+      .klaro .cookie-modal .cm-btn,
+      .klaro .context-notice .cm-btn,
+      .klaro .cookie-notice .cm-btn {
+        color: #ffffff !important;
+        background-color: #5f0019 !important;
+        border-radius: 4px !important;
+        padding: 8px 16px !important;
+        font-weight: 500 !important;
+        display: inline-block !important;
+        text-align: center !important;
+        min-width: 120px !important;
+      }
+
+      .klaro .cookie-modal .cm-btn:hover,
+      .klaro .context-notice .cm-btn:hover,
+      .klaro .cookie-notice .cm-btn:hover {
+        background-color: #4a0014 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-success,
+      .klaro .context-notice .cm-btn.cm-btn-success,
+      .klaro .cookie-notice .cm-btn.cm-btn-success {
+        background-color: #5f0019 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-success:hover,
+      .klaro .context-notice .cm-btn.cm-btn-success:hover,
+      .klaro .cookie-notice .cm-btn.cm-btn-success:hover {
+        background-color: #4a0014 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-decline,
+      .klaro .context-notice .cm-btn.cm-btn-decline,
+      .klaro .cookie-notice .cm-btn.cm-btn-decline {
+        background-color: #666666 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-decline:hover,
+      .klaro .context-notice .cm-btn.cm-btn-decline:hover,
+      .klaro .cookie-notice .cm-btn.cm-btn-decline:hover {
+        background-color: #555555 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-info,
+      .klaro .context-notice .cm-btn.cm-btn-info,
+      .klaro .cookie-notice .cm-btn.cm-btn-info {
+        background-color: #333333 !important;
+      }
+
+      .klaro .cookie-modal .cm-btn.cm-btn-info:hover,
+      .klaro .context-notice .cm-btn.cm-btn-info:hover,
+      .klaro .cookie-notice .cm-btn.cm-btn-info:hover {
+        background-color: #222222 !important;
+      }
+
+      .klaro .cookie-modal a,
+      .klaro .context-notice a,
+      .klaro .cookie-notice a {
+        color: #5f0019 !important;
+        text-decoration: underline !important;
+        font-weight: 500 !important;
+      }
+
+      .klaro .cookie-modal a:hover,
+      .klaro .context-notice a:hover,
+      .klaro .cookie-notice a:hover {
+        color: #4a0014 !important;
+      }
+
+      .klaro .cookie-modal .cm-footer-buttons,
+      .klaro .context-notice .cm-footer-buttons,
+      .klaro .cookie-notice .cm-footer-buttons {
+        gap: 8px !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        margin-top: 1rem !important;
+      }
+
+      .klaro .cookie-notice:not(.cookie-modal-notice) {
+        background-color: #ffffff !important;
+        color: #333333 !important;
+        border: 1px solid #e5e7eb !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      }
+
+      .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body p {
+        color: #333333 !important;
+      }
+
+      .klaro .cookie-notice .cn-ok {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+      }
+    </style>
+    <script is:inline src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js" defer></script>
+    <script is:inline src="/js/klaro-config.js" defer></script>
+
+    <!-- Analytics Script Template (loaded by Klaro after consent) -->
+    <script type="text/plain" data-type="application/javascript" data-name="google-analytics">
+      (function() {
+        var analyticsScript = document.createElement('script');
+        analyticsScript.async = true;
+        analyticsScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-H3SRNSWEL1';
+        document.head.appendChild(analyticsScript);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-H3SRNSWEL1');
+      })();
+    </script>
+    <title>{title}</title>
+  </head>
+  <body class="bg-cream-100 text-gray-800">
+    <slot />
+    <WhatsAppWidget phoneNumber="+491622768090" />
+    
+    <!-- Initialize Klaro only if consent hasn't been given -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check if we have stored consent
+        const consentCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('klaro='));
+
+        // Only show the consent banner if no consent cookie exists
+        if (!consentCookie) {
+          setTimeout(function() {
+            if (window.klaro && window.klaroConfig) {
+              window.klaro.show(window.klaroConfig);
+            }
+          }, 100);
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  :root {
+    --cream-50: #fbf7f0;
+    --cream-100: #f5e9db;
+    --cream-200: #e8dcc2;
+  }
+</style>

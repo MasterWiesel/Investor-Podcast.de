@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import AudioPlayer from '../../components/AudioPlayer.astro';
+import ShareWidget from '../../components/ShareWidget.astro';
+import { episodes } from '../../data/episodes';
+import { isPublished } from '../../utils/dateUtils';
+
+export function getStaticPaths() {
+  return episodes
+    .filter(episode => isPublished(episode.publishDate))
+    .map(episode => ({
+      params: { id: episode.id },
+      props: { episode },
+    }));
+}
+
+const { episode } = Astro.props;
+
+// Create a base URL for sharing
+const baseUrl = 'https://investor-podcast.de';
+const currentPath = `/podcast-folgen/${episode.id}`;
+const shareUrl = `${baseUrl}${currentPath}`;
+---
+
+<Layout title={`${episode.title} - Investor Podcast`}>
+  <Header />
+  <main class="bg-cream-50 min-h-screen py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <article class="lg:col-span-2">
+          <div class="bg-white rounded-xl p-8 shadow-lg">      
+            {episode.audioUrl && (
+              <AudioPlayer src={episode.audioUrl} title={episode.title} />
+            )}
+
+            <div class="flex justify-center items-center gap-12 mb-8">
+              <a 
+                href="#" 
+                class="platform-icon hover:opacity-80 transition-opacity" 
+                title="Bei Spotify hören"
+              >
+                <img 
+                  src="https://perfectio-die-finanzmakler.de/public/icons/spotify.webp" 
+                  alt="Spotify" 
+                  width="64"
+                  height="64"
+                  class="w-16 h-16 object-contain"
+                >
+              </a>
+              <a 
+                href="#" 
+                class="platform-icon hover:opacity-80 transition-opacity" 
+                title="Bei Apple Podcasts hören"
+              >
+                <img 
+                  src="https://perfectio-die-finanzmakler.de/public/icons/apple-podcasts.png" 
+                  alt="Apple Podcasts" 
+                  width="64"
+                  height="64"
+                  class="w-16 h-16 object-contain"
+                >
+              </a>
+              <a 
+                href="#" 
+                class="platform-icon hover:opacity-80 transition-opacity" 
+                title="Bei Google Podcasts hören"
+              >
+                <img 
+                  src="https://perfectio-die-finanzmakler.de/public/icons/google-podcasts.png" 
+                  alt="Google Podcasts" 
+                  width="64"
+                  height="64"
+                  class="w-16 h-16 object-contain"
+                >
+              </a>
+            </div>
+
+            <h1 class="text-3xl font-bold mb-4">{episode.title}</h1>
+            
+            <div class="prose max-w-none">
+              <p class="text-xl text-gray-700 mb-8">{episode.description}</p>
+              
+              <div class="bg-cream-50 p-6 rounded-lg mb-12">
+                <h2 class="font-semibold text-xl mb-4">Zusammenfassung und Stichpunkte:</h2>
+                <div class="space-y-2" set:html={episode.summary} />
+              </div>
+
+              <h2 class="text-2xl font-bold mb-6">Shownotes und Episodendetails</h2>
+              <div class="space-y-4" set:html={episode.shownotes} />
+            </div>
+          </div>
+
+          <div class="mt-12 mb-8">
+            <a href="/podcast-folgen" class="text-[#5f0019] hover:underline">← Zurück zu allen Folgen</a>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="lg:sticky lg:top-8 space-y-8 self-start">
+          <ShareWidget 
+            title={episode.title}
+            url={shareUrl}
+          />
+        </aside>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  aside {
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .platform-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-color: #f8f8f8;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .platform-icon img {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  }
+</style>

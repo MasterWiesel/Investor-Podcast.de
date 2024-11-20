@@ -1,0 +1,13 @@
+<!-- The provided bear logo SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300">
+  <g fill="#000000">
+    <path d="M250 50c-27.6 0-50 22.4-50 50v50h100v-50c0-27.6-22.4-50-50-50z"/>
+    <path d="M200 150v100h100V150H200z"/>
+    <path d="M150 100v200h200V100H150z"/>
+    <path d="M100 150v100h50V150H100z"/>
+    <path d="M350 150v100h50V150H350z"/>
+    <path d="M50 200v50h50v-50H50z"/>
+    <path d="M400 200v50h50v-50H400z"/>
+  </g>
+  <text x="250" y="280" text-anchor="middle" font-family="Arial" font-size="40" font-weight="bold">Investor Podcast</text>
+</svg>

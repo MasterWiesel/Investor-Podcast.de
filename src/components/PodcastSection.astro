@@ -1,0 +1,30 @@
+---
+import PodcastCard from './PodcastCard.astro';
+import { episodes } from '../data/episodes';
+import { isPublished } from '../utils/dateUtils';
+
+const publishedEpisodes = episodes
+  .filter(episode => isPublished(episode.publishDate))
+  .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
+  .slice(0, 3); // Only show the 3 most recent episodes
+
+console.log('Available episodes:', episodes.length);
+console.log('Published episodes:', publishedEpisodes.map(ep => ep.title));
+---
+
+<section id="podcasts" class="bg-cream-50 py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center mb-12">
+      <h2 class="text-4xl font-bold">Aktuelle Podcast-Folgen</h2>
+      <a href="/podcast-folgen" class="text-[#5f0019] hover:underline">Alle Folgen ansehen →</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {publishedEpisodes.map(episode => (
+        <PodcastCard 
+          {...episode}
+          showLink={true}
+        />
+      ))}
+    </div>
+  </div>
+</section>

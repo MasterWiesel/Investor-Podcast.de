@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://investor-podcast.de/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow specific paths
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /draft/
+
+# Allow specific file types
+Allow: /*.html$
+Allow: /*.xml$
+Allow: /*.json$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.css$
+Allow: /*.js$
